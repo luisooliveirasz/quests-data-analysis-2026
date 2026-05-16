@@ -1,2 +1,2 @@
-# quests-data-analysis-2026
+Questões de análises de dados feitas para as seletivas para as olimpíadas internacionais de astronomia de 2026.
  
