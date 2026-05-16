@@ -22,7 +22,7 @@ GALCEN_FRAME = Galactocentric(
 
 SEPARATOR = "─" * 100
 
-def build_dataframe(raw: list) -> pd.DataFrame:
+def build_sattelites_dataframe(raw: list) -> pd.DataFrame:
     records = []
     for name, ra_hms, dec_dms, d_helio in raw:
         coord = SkyCoord(
@@ -78,10 +78,10 @@ def print_statistics(df: pd.DataFrame) -> None:
     idx_max = df["r_gc_kpc"].idxmax()
 
     print(f"Mais próximo ao GC : {idx_min:30s}  r_gc = {df.loc[idx_min, 'r_gc_kpc']:.2f} kpc")
-    print(f"Mais distante do GC: {idx_max:30s}  r_gc = {df.loc[idx_max, 'r_gc_kpc']:.2f} kpc")
-    print(f"r_gc médio         : {desc['mean']:.2f} kpc")
-    print(f"r_gc mediano       : {desc['50%']:.2f} kpc")
-    print(f"Desvio-padrão      : {df['r_gc_kpc'].std(ddof=0):.2f} kpc")
+    print(f"Mais distante do GC : {idx_max:30s}  r_gc = {df.loc[idx_max, 'r_gc_kpc']:.2f} kpc")
+    print(f"r_gc médio : {desc['mean']:.2f} kpc")
+    print(f"r_gc mediano : {desc['50%']:.2f} kpc")
+    print(f"Desvio-padrão : {df['r_gc_kpc'].std(ddof=0):.2f} kpc")
     print(f"|Z| médio (altura acima/abaixo do plano): {df['Z_kpc'].abs().mean():.2f} kpc\n")
 
     print("----- DESCRIBE COMPLETO (r_gc_kpc) -----")
@@ -90,11 +90,6 @@ def print_statistics(df: pd.DataFrame) -> None:
 
 
 def compute_centroid_and_angles(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Calcula o centróide (Xc, Yc, Zc) e, para cada satélite, o vetor relativo
-    ao centróide e o ângulo theta entre o vetor centróide e o vetor relativo.
-    Retorna um novo DataFrame com essas colunas extras.
-    """
     centroid = df[["X_kpc", "Y_kpc", "Z_kpc"]].mean()
     Xc, Yc, Zc = centroid["X_kpc"], centroid["Y_kpc"], centroid["Z_kpc"]
     norm_centroid = np.linalg.norm([Xc, Yc, Zc])
@@ -113,10 +108,10 @@ def compute_centroid_and_angles(df: pd.DataFrame) -> pd.DataFrame:
     theta_deg = np.degrees(np.arccos(cos_theta))
 
     result = df.copy()
-    result["dX_kpc"]    = dX.round(3)
-    result["dY_kpc"]    = dY.round(3)
-    result["dZ_kpc"]    = dZ.round(3)
-    result["norm_rel"]  = norm_rel.round(3)
+    result["dX_kpc"] = dX.round(3)
+    result["dY_kpc"] = dY.round(3)
+    result["dZ_kpc"] = dZ.round(3)
+    result["norm_rel"] = norm_rel.round(3)
     result["theta_deg"] = theta_deg.round(3)
 
     return result, centroid, norm_centroid
@@ -225,7 +220,7 @@ def export_csv(df: pd.DataFrame, path: str = "satellites_gc.csv") -> None:
 
 
 if __name__ == "__main__":
-    df = build_dataframe(SATELLITES_RAW)
+    df = build_sattelites_dataframe(SATELLITES_RAW)
 
     print_main_table(df)
 
